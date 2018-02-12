@@ -34,8 +34,35 @@ class Approximator(object):
             return (f(x[:-1], y[:-1]) - f(x[1:], y[1:])) / (x[0] - x[-1])
 
 
-    def approximate(self, x, x0, degree):
-        pass
+
+
+    def approximate(self, x, y, x0, degree):
+
+        def dot_product(x0, x):
+            product = 1
+            for x_i in x:
+                product *= (x0 - x_i)
+            return product
+
+        def polynof_coef(x, y):
+            if len(x) == 1 or len(x) == 0:
+                return 1
+            if len(x) == 2:
+                return (y[0] - y[1]) / (x[0] - x[1])
+            else:
+                return (polynof_coef(x[:-1], y[:-1]) - polynof_coef(x[1:], y[1:])) / (x[0] - x[-1])
+
+        def calculate_approximation(x, y, x0, n):
+            sigma = y[0]
+            for k in range(1, n + 1):
+                sigma += dot_product(x0, x[:k]) * polynof_coef(x[:k + 1], y[:k + 1])
+            return sigma
+
+
+        fitted_value = calculate_approximation(x, y, x0, degree)
+
+        return fitted_value
+
 
 
     def interpolate(self):
@@ -61,6 +88,14 @@ class Approximator(object):
         # Dirac function
         return np.sin(x) / x
 
+    def dot(self, x, x_vector):
+        product = 1
+
+        for x_i in x_vector:
+            product *= (x - x_i)
+
+        return product
+
 
     def run(self):
         self.read_input()
@@ -70,20 +105,12 @@ class Approximator(object):
         plt.show()
 
 
-#i = Approximator()
-#i.run()
+i = Approximator()
+print(i.approximate([0, 1, 2, 3], [0, 0.5, 0.866, 1], 1.5, 3))
+i.run()
 
 
-def f(x, y):
-    if len(x) == 1 or len(x) == 0:
-        return 1
-    if len(x) == 2:
-        return (y[0] - y[1]) / (x[0] - x[1])
-    else:
-        return (f(x[:-1], y[:-1]) - f(x[1:], y[1:])) / (x[0] - x[-1])
 
-def get(x0, xe, x, y, X):
-    s = 0
-    for i in range(x0, xe + 1):
-        s += (X - x0) * f(x[x.index(x0):x.index(xe) + 1], y[x.index(x0):x.index(xe) + 1])
-    return s
+
+
+    
