@@ -30,9 +30,16 @@ class Approximator(object):
         plt.plot(x, y, "o-", color="#A9A9A9", lw=1)
         plt.plot(x_approx, y_approx, "r")
         plt.plot(x0, y0, "og")
+        
+        # Plotting an annotation approximated value
+        plt.annotate('Predicted value: {:4.5f}'.format(y0),
+                     xy=(x0, y0),
+                     xytext=(max(x * 0.6), max(y) * 0.3),
+                     arrowprops=dict(arrowstyle="-|>",
+                                     connectionstyle="arc3,rad=-0.2",
+                                     fc="w"))
 
-        plt.legend(["Dirac function", "Approximated function"])
-        #plt.plot(x, y_approximated, "r")
+        plt.legend(["Dirac function", "Approximated function", "Predicted value"])
 
 
     def get_parameter_alpha(self, x, y):
