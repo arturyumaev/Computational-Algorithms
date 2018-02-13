@@ -17,12 +17,14 @@ class Approximator(object):
         return self.degree, self.x0
     
 
-    def plot(self, x, y, x_approx, y_approx, x0, y0):
+    def plot(self, x, y, x_approx, y_approx, x0, y0, MSE, MAE):
 
         # Representation parameters
-        plt.title("Approximation of Dirac function in segment [{0}, {1}, {2}]".format(min(x),
-                                                                                      max(x),
-                                                                                      self.segment_n_points))
+        plt.title("Approximation of Dirac function in segment [{}, {}, {}], MSE:{:4.5f}, MAE:{:4.5f}".format(min(x),
+                                                                                                             max(x),
+                                                                                                             self.segment_n_points,
+                                                                                                             MSE,
+                                                                                                             MAE))
         plt.xlabel("x")
         plt.ylabel("y")
         plt.grid(True)
@@ -121,6 +123,23 @@ class Approximator(object):
         return np.sin(x) / x
 
 
+    def compute_MSE_MAE(self, x, N_nearest_list, y_true_global, y_pred):
+
+        # Mean Squared Error and Mean Absolute Error computation
+        
+        start_i = np.where(x == N_nearest_list[0])
+        start_i = start_i[0][0] # Numpy unboxing
+
+        MSE = 0
+        MAE = 0
+
+        for i in range(len(y_pred)):
+            MSE +=    (y_true_global[i + start_i] - y_pred[i])**2
+            MAE += abs(y_true_global[i + start_i] - y_pred[i])
+
+        return MSE, MAE
+
+
     def get_x0_nearest(self, x0, x, N):
 
         if N % 2 != 0:
@@ -179,6 +198,8 @@ class Approximator(object):
         for n in N_nearest_list:
             result.append(self.approximate(N_nearest_list, y_on_N_nearest, n, degree))
 
+        MSE, MAE = self.compute_MSE_MAE(X, N_nearest_list, y, result)
+
         # Approximation on current segment
         self.plot(X,
                   y,
@@ -188,8 +209,14 @@ class Approximator(object):
                   self.approximate(N_nearest_list,
                                    y_on_N_nearest,
                                    x0,
-                                   degree))
+                                   degree),
+                  MSE,
+                  MAE)
+        
         plt.show()
+
+
+        
 
 
 def main():
