@@ -120,7 +120,7 @@ class Approximator(object):
     def f(self, x):
 
         # Dirac function
-        return np.sin(x) / x
+        return np.sin(x) * x
 
 
     def compute_MSE_MAE(self, x, N_nearest_list, y_true_global, y_pred):
@@ -182,13 +182,15 @@ class Approximator(object):
 
         # Getting original Dirac function
         self.segment_n_points = 100
-        self.N_nearest = self.segment_n_points // 5
+        
 
         X = self.get_x_segment(n_points=self.segment_n_points)
         y = self.get_y_segment(X)
         
         # Input parameters
         degree, x0 = self.read_input()
+
+        self.N_nearest = degree - 1
 
         # Getting N nearest of x0 points
         N_nearest_list = np.array(self.get_x0_nearest(x0, X, self.N_nearest))

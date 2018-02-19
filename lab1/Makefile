@@ -8,3 +8,6 @@ push:
 	git add -A
 	git commit -m "Update"
 	git push
+
+run: main.py
+	python3 ./main.py
