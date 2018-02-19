@@ -145,6 +145,9 @@ class Approximator(object):
         if N % 2 != 0:
             N += 1
 
+        if N == 0:
+            N = 2
+
         # Searching for N neartest of x0
         x_prev = 0
         x_next = 0
