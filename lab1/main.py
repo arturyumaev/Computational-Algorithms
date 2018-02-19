@@ -20,11 +20,11 @@ class Approximator(object):
     def plot(self, x, y, x_approx, y_approx, x0, y0, MSE, MAE):
 
         # Representation parameters
-        plt.title("Approximation of Dirac function in segment [{}, {}, {}], MSE:{:4.5f}, MAE:{:4.5f}".format(min(x),
-                                                                                                             max(x),
-                                                                                                             self.segment_n_points,
-                                                                                                             MSE,
-                                                                                                             MAE))
+        plt.title("Approximation of sin(x)*x function in segment [{}, {}, {}], MSE:{:4.5f}, real value{:4.5f},".format(min(x),
+                                                                                                                max(x),
+                                                                                                                self.segment_n_points,
+                                                                                                                MSE,
+                                                                                                                self.f(x0)))
         plt.xlabel("x")
         plt.ylabel("y")
         plt.grid(True)
