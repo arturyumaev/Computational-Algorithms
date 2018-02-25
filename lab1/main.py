@@ -20,7 +20,7 @@ class Approximator(object):
     def plot(self, x, y, x_approx, y_approx, x0, y0, MSE, MAE):
 
         # Representation parameters
-        plt.title("Approximation of sin(x)*x function in segment [{}, {}, {}], MSE:{:4.5f}, real value{:4.5f},".format(min(x),
+        plt.title("Approximation of sin(x)*x function in segment [{}, {}, {}], MSE:{:4.5f}, real value:{:4.3f},".format(min(x),
                                                                                                                 max(x),
                                                                                                                 self.segment_n_points,
                                                                                                                 MSE,
@@ -103,9 +103,6 @@ class Approximator(object):
         pass
 
 
-    def find_root(self, a, b):
-        pass
-
 
     def get_x_segment(self, n_points, a=-15, b=15):
 
@@ -120,7 +117,7 @@ class Approximator(object):
     def f(self, x):
 
         # Dirac function
-        return np.sin(x) * x
+        return -(np.cos(x) - x)
 
 
     def compute_MSE_MAE(self, x, N_nearest_list, y_true_global, y_pred):
@@ -183,13 +180,24 @@ class Approximator(object):
 
     def run(self):
 
+        flag = int(input("Need to find a root?[1/0]: "))
+        if flag == 1:
+            a = float(input("Input a: "))
+            b = float(input("Input b: "))
+            if a > b:
+                a, b = b, a
+        result_root = []
+
         # Getting original Dirac function
-        self.segment_n_points = 100
+        self.segment_n_points = 50
         
 
         X = self.get_x_segment(n_points=self.segment_n_points)
         y = self.get_y_segment(X)
-        
+
+        if flag == 1:
+            aa, bb = self.find_root(a, b, X, y)
+            
         # Input parameters
         degree, x0 = self.read_input()
 
@@ -202,6 +210,11 @@ class Approximator(object):
         result = []
         for n in N_nearest_list:
             result.append(self.approximate(N_nearest_list, y_on_N_nearest, n, degree))
+            if flag == 1:
+                result_root.append(self.approximate(bb, aa, 0, degree))
+
+        if flag == 1:
+            print("ROOT:", self.approximate(bb, aa, 0, degree))
 
         MSE, MAE = self.compute_MSE_MAE(X, N_nearest_list, y, result)
 
@@ -220,6 +233,30 @@ class Approximator(object):
         
         plt.show()
 
+
+    def find_root(self, a, b, X, y):
+        
+        x_s = 0
+        x_e = 0
+        
+        for x_i in X:
+            if a > x_i:
+                x_s = x_i
+            if b >= x_i:
+                x_e = x_i
+
+        X = list(X)
+        ind_x_s = X.index(x_s)
+        ind_x_e = X.index(x_e)
+
+        X_a = []
+        Y_a = []
+
+        for i in range(ind_x_s, ind_x_e + 1):
+            X_a.append(X[i])
+            Y_a.append(self.f(X[i]))
+
+        return X_a, Y_a
 
         
 
