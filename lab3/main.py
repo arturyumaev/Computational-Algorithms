@@ -3,7 +3,7 @@ import pandas as pd
 
 
 def y(x):
-    return np.sin(x)
+    return np.cos(x)
 
 
 def get_data(a, b, N):
@@ -29,7 +29,7 @@ def get_node_structure(N, x, y):
 
 
 def print_table(x, y, a, b):
-    print("\ny(x) = sin(x); x_i ∈ [%1.2f, %1.2f]; N=10;\n" % (a, b))
+    print("\ny(x) = cos(x); x_i ∈ [%1.2f, %1.2f]; N=10;\n" % (a, b))
     print(pd.DataFrame({"x" : x, "y=y(x)" : y}))
 
 
@@ -105,7 +105,7 @@ def main():
     pi = np.pi
     a = -pi
     b =  pi
-    N = 5
+    N = 7
 
     # Get data
     x, y = get_data(a, b, N)
@@ -118,7 +118,7 @@ def main():
     node_structure = get_node_structure(N, x, y)
     alpha, beta, node_structure = compute_SLAE(node_structure, N, x, y)
     print_node_structure(node_structure)
-    print("\nAnswer: %4.5f" % (interpolate(node_structure, x0, N)))
+    print("\nAnswer: %4.8f" % (interpolate(node_structure, x0, N)))
 
 
 if __name__ == "__main__":
