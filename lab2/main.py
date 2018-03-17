@@ -18,7 +18,7 @@ def get_matrix():
         for y in range(len(A[x])):
             A[x][y] = f(x, y)
 
-    A = pd.DataFrame(A)
+    A = pd.DataFrame(A) + 0.0001
 
     return A
     

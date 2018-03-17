@@ -6,6 +6,7 @@ import numpy as np
 
 class Approximator(object):
 
+
     def __init__(self):
         pass
 
@@ -15,12 +16,12 @@ class Approximator(object):
         self.x0 = float(input("Input x0: "))
 
         return self.degree, self.x0
-    
+
 
     def plot(self, x, y, x_approx, y_approx, x0, y0, MSE, MAE):
 
         # Representation parameters
-        plt.title("Approximation of sin(x)*x function in segment [{}, {}, {}], MSE:{:4.5f}, real value:{:4.3f},".format(min(x),
+        plt.title("Approximation of -cos(x)+x function in segment [{}, {}, {}], MSE:{:4.5f}, real value:{:4.3f},".format(min(x),
                                                                                                                 max(x),
                                                                                                                 self.segment_n_points,
                                                                                                                 MSE,
@@ -101,7 +102,6 @@ class Approximator(object):
 
     def interpolate(self):
         pass
-
 
 
     def get_x_segment(self, n_points, a=-15, b=15):
@@ -188,18 +188,20 @@ class Approximator(object):
                 a, b = b, a
         result_root = []
 
-        # Getting original Dirac function
-        self.segment_n_points = 50
-        
+        # Input parameters
+        degree, x0 = self.read_input()
 
+        # Getting original Dirac function
+        if self.degree < 2:
+            self.segment_n_points = 50
+        else:
+            self.segment_n_points = 50
+        
         X = self.get_x_segment(n_points=self.segment_n_points)
         y = self.get_y_segment(X)
 
         if flag == 1:
             aa, bb = self.find_root(a, b, X, y)
-            
-        # Input parameters
-        degree, x0 = self.read_input()
 
         self.N_nearest = degree - 1
 
@@ -212,6 +214,7 @@ class Approximator(object):
             result.append(self.approximate(N_nearest_list, y_on_N_nearest, n, degree))
             if flag == 1:
                 result_root.append(self.approximate(bb, aa, 0, degree))
+                
 
         if flag == 1:
             print("ROOT:", self.approximate(bb, aa, 0, degree))
@@ -259,8 +262,6 @@ class Approximator(object):
         return X_a, Y_a
 
         
-
-
 def main():
     i = Approximator()
     i.run()
