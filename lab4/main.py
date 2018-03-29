@@ -66,7 +66,7 @@ def load_weights():
         return 0
     
 
-def get_slae(x, y, k):
+def get_slae(x, y, k, w):
     # Create matrix A and b
     A = np.zeros((k + 1, k + 1))
     b = np.zeros((k + 1, 1))
@@ -74,11 +74,11 @@ def get_slae(x, y, k):
     # A formation
     for i in range(A.shape[0]):
         for j in range(A.shape[1]):
-            A[i][j] = phi(x, i + j)
+            A[i][j] = w[i] * phi(x, i + j)
 
     # b formation
     for i in range(b.shape[0]):
-        b[i] = phi(x, i, y=y, with_y=True)
+        b[i] = w[i] * phi(x, i, y=y, with_y=True)
 
     return A, b
 
@@ -131,7 +131,8 @@ print_table(table)
 # System solving
 x = table[0]
 y = table[1]
-A, B = get_slae(x, y, degree)
+w = table[2] # weights
+A, B = get_slae(x, y, degree, w)
 coefficients = solve_slae(A, B)
 x_fitted, y_fitted = get_fitted_space(x, coefficients, ndots)
 
