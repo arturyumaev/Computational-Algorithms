@@ -1,7 +1,10 @@
 import numpy as np
 import pandas as pd
+import glob
+
 from matplotlib import pyplot as plt
 
+WEIGHTS_NOT_FOUND = 0
 
 def f(x):
     return np.sin(x)
@@ -9,7 +12,16 @@ def f(x):
 
 def get_table(a, b, ndots):
     table = np.zeros((3, ndots)) # 3 is x, y, w
-    weights = np.ones((ndots))
+
+    # Weigts loading
+    w = load_weights()
+    if (w == WEIGHTS_NOT_FOUND):
+        weights = np.ones((ndots))
+    else:
+        weights = np.ones((ndots))
+        for d in range(len(w)):
+            weights[int(w[d][0])] = float(w[d][1]) # Fill weights
+
     x = np.linspace(a, b, ndots)
     y = f(x)
 
@@ -21,7 +33,7 @@ def get_table(a, b, ndots):
     for i in range(y.shape[0]):
         table[1][i] = y[i]
 
-    # Fill the table by weights5
+    # Fill the table by weights
     for i in range(weights.shape[0]):
         table[2][i] = weights[i]
 
@@ -38,6 +50,21 @@ def phi(x, k, y=False, with_y=False):
     else:
         return np.sum((x ** k) * y)
 
+
+def load_weights():
+    fname = "./weights.txt"
+    if (fname in glob.glob("./*.txt")):
+        file = open(fname, "r")
+        w = [tuple(i[:-1].split(' ')) for i in open("./weights.txt", "r").readlines()]
+        if (len(w) == 0):
+            print("Weights not found! Default w_i=1 for each y_i")
+            return 0
+        else:
+            return w
+    else:
+        print("Weights file doesn't exists! Default w_i=1 for each y_i")
+        return 0
+    
 
 def get_slae(x, y, k):
     # Create matrix A and b
@@ -67,17 +94,6 @@ def plot_approximated(x, y, x_fitted, y_fitted, legend=['y=f(x)', 'Approximated 
     plt.legend(legend)
     plt.plot(x, y, x_fitted, y_fitted, "r")
     plt.show()
-
-
-def change_weight(table):
-    w_idx = int(input("Input weight index in the table: "))
-    new_w = float(input("Input weight: "))
-    table[2][w_idx] = new_w
-
-    # Show new table
-    print_table(table)
-    
-    return table
 
 
 def print_table(table):
@@ -111,7 +127,6 @@ def get_fitted_space(x, coefs, ndots):
 a, b, ndots, degree = set_params()
 table = get_table(a, b, ndots)
 print_table(table)
-table = change_weight(table)
 
 # System solving
 x = table[0]
@@ -122,6 +137,8 @@ x_fitted, y_fitted = get_fitted_space(x, coefficients, ndots)
 
 # Plotting results
 plot_approximated(x, y, x_fitted, y_fitted)
+
+
 """
 if __name__ == "__main__":
     main()
