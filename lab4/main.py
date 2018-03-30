@@ -91,8 +91,8 @@ def solve_slae(A, b):
 def plot_approximated(x, y, x_fitted, y_fitted, legend=['y=f(x)', 'Approximated Ф(x)~f(x)']):
     plt.title('Function approximation')
     plt.grid(True)
-    plt.legend(legend)
     plt.plot(x, y, x_fitted, y_fitted, "r")
+    plt.legend(legend)
     plt.show()
 
 
@@ -109,10 +109,20 @@ def set_params():
     return a, b, ndots, degree
 
 
+def test():
+    x = np.array([i for i in range(1, 9)])
+    y = np.array([5.95, 20.95, 51.9, 105, 186, 301, 456.1, 657.1])
+
+    A, b = get_slae(x, y, 3, np.ones(x.shape))
+    c = solve_slae(A, b)
+    print(c)
+    
+
+
 def compute_polynom(x, coefs):
-    fitted_value = coefs[0]
-    for i in range(1, len(coefs)):
-        fitted_value = coefs[i] * (x ** i)
+    fitted_value = 0
+    for i in range(len(coefs)):
+        fitted_value += coefs[i] * (x ** i)
 
     return fitted_value
 
@@ -134,6 +144,7 @@ y = table[1]
 w = table[2] # weights
 A, B = get_slae(x, y, degree, w)
 coefficients = solve_slae(A, B)
+print("\n", pd.DataFrame(coefficients, columns=['Polynom coefficients']))
 x_fitted, y_fitted = get_fitted_space(x, coefficients, ndots)
 
 # Plotting results
