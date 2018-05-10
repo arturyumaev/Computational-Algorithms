@@ -33,22 +33,22 @@ def get_table(a, b, ndots):
     for i in range(y.shape[0]):
         table[1][i] = y[i]
 
-    # Fill the table by weights
+    # Fill the table by 5weights
     for i in range(weights.shape[0]):
         table[2][i] = weights[i]
 
     return table
 
 
-def phi(x, k, y=False, with_y=False):
+def phi(x, k, y=False, with_y=False, w_i=1):
     # a - numpy vector of coefficients
     # x - numpy vector
     # k - degree
     # Ф(x, a) = sum(a_k * ф_k(x))_i for i=(0, ..., n)
     if (with_y == False):
-        return np.sum(x ** k)
+        return np.sum((x ** k) * w_i)
     else:
-        return np.sum((x ** k) * y)
+        return np.sum(w_i * (x ** k) * y)
 
 
 def load_weights():
@@ -74,11 +74,14 @@ def get_slae(x, y, k, w):
     # A formation
     for i in range(A.shape[0]):
         for j in range(A.shape[1]):
-            A[i][j] = w[i] * phi(x, i + j)
+            A[i][j] = phi(x, i + j, w_i=w)
 
     # b formation
     for i in range(b.shape[0]):
-        b[i] = w[i] * phi(x, i, y=y, with_y=True)
+        b[i] = phi(x, i, y=y, w_i=w, with_y=True)
+
+    print()
+    print(A)
 
     return A, b
 
@@ -91,7 +94,8 @@ def solve_slae(A, b):
 def plot_approximated(x, y, x_fitted, y_fitted, legend=['y=f(x)', 'Approximated Ф(x)~f(x)']):
     plt.title('Function approximation')
     plt.grid(True)
-    plt.plot(x, y, x_fitted, y_fitted, "r")
+    plt.plot(x, y, 'o')
+    plt.plot(x_fitted, y_fitted, "-")
     plt.legend(legend)
     plt.show()
 
@@ -128,9 +132,10 @@ def compute_polynom(x, coefs):
 
 
 def get_fitted_space(x, coefs, ndots):
-    y = np.array([compute_polynom(i, coefs) for i in x])
+    sp = np.linspace(min(x), max(x), ndots)
+    y = np.array([compute_polynom(i, coefs) for i in sp])
 
-    return x, y
+    return sp, y
 
 
 # Set main configs
@@ -145,7 +150,7 @@ w = table[2] # weights
 A, B = get_slae(x, y, degree, w)
 coefficients = solve_slae(A, B)
 print("\n", pd.DataFrame(coefficients, columns=['Polynom coefficients']))
-x_fitted, y_fitted = get_fitted_space(x, coefficients, ndots)
+x_fitted, y_fitted = get_fitted_space(x, coefficients, 500)
 
 # Plotting results
 plot_approximated(x, y, x_fitted, y_fitted)
