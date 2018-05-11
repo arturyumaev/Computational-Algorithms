@@ -65,7 +65,10 @@ def half_divide_method(a, b, eps):
         a, b = (a, x) if f(a) * f(x) < 0 else (x, b)
     return (a + b) / 2
 
+def find_roots():
+    pass
+
 
 plt.grid(True)
-plt.plot(np.linspace(-1, 1, 500), Pn(np.linspace(-1, 1, 500), 30))
+plt.plot(np.linspace(-1, 1, 500), Pn(np.linspace(-1, 1, 500), 25))
 plt.show()
