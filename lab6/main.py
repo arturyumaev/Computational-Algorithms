@@ -46,11 +46,14 @@ def Pn(x, n):
         second = (1 - 1 / n) * Pn(x, n - 2)
         return first - second
 
-def sqtr(x):
+def sqrt(x):
     return x ** (1 / 2)
 
 def sqr(x):
     return x * x
+
+def sin(x):
+    return np.sin(x)
 
 def f(t):
     return 1 / sqrt(2 * np.pi) * exp(-sqr(t) / 2)
@@ -58,17 +61,48 @@ def f(t):
 def f_test(x):
     return np.sin(x)
 
-def half_divide_method(a, b, eps):
+def half_divide_method(a, b, eps, Pn_degree):
+    c = 0
     x = (a + b) / 2
-    while math.fabs(f(x)) >= eps:
+    while math.fabs(Pn(x, Pn_degree)) >= eps:
+        c += 1
         x = (a + b) / 2
-        a, b = (a, x) if f(a) * f(x) < 0 else (x, b)
+        a, b = (a, x) if Pn(a, Pn_degree) * Pn(x, Pn_degree) < 0 else (x, b)
+
+        # There is no root in area
+        if (c >= 100):
+            return "NO_ROOT"
+
     return (a + b) / 2
 
-def find_roots():
-    pass
+def _find_roots(n_nodes, h, eps, a=-1, b=1):
+    roots = []
+    start = a
+    end = b
 
+    while (start <= end):
+        root_result = half_divide_method(start, start + h, eps, n_nodes)
+        start += h
 
-plt.grid(True)
-plt.plot(np.linspace(-1, 1, 500), Pn(np.linspace(-1, 1, 500), 25))
-plt.show()
+        if (root_result != "NO_ROOT"):
+            roots.append(root_result)
+
+    if (len(roots) != n_nodes):
+        return 'ROOTS_NOT_FOUND'
+    else:
+        return roots
+
+def find_all_roots(n_nodes, eps=1e-5):
+    h = 1 / n_nodes
+
+    while (_find_roots(n_nodes, h, eps) == 'ROOTS_NOT_FOUND'):
+        h /= 2
+
+    roots = _find_roots(n_nodes, h, eps)
+
+    return roots
+
+a = find_all_roots(15)
+#plt.grid(True)
+#plt.plot(np.linspace(-1, 1, 500), Pn(np.linspace(-1, 1, 500), 3))
+#plt.show()
