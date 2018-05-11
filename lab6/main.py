@@ -2,6 +2,13 @@ import numpy as np
 import math
 from matplotlib import pyplot as plt
 
+#  a                  n
+#  /          b - a  ___
+#  | f(t)dt = -----  \
+#  /            2    /__ A_i f(t_i)
+#  b                 i=1
+
+
 def input_alpha():
     return float(input("Input aplha: "))
 
