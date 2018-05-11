@@ -34,12 +34,6 @@ def input_params():
 
     return a, eps, n_nodes, degree
 
-def compute_Pn_coefs():
-    pass
-
-def compute_Pn():
-    pass
-
 # Lejandre Polynom
 def Pn(x, n):
     if (n == 0):
@@ -71,7 +65,7 @@ def f_test(x):
 def half_divide_method(a, b, eps, Pn_degree):
     c = 0
     x = (a + b) / 2
-    while math.fabs(Pn(x, Pn_degree)) >= eps:
+    while (math.fabs(Pn(x, Pn_degree)) >= eps):
         c += 1
         x = (a + b) / 2
         a, b = (a, x) if Pn(a, Pn_degree) * Pn(x, Pn_degree) < 0 else (x, b)
@@ -99,17 +93,36 @@ def _find_roots(n_nodes, h, eps, a=-1, b=1):
     else:
         return roots
 
-def find_all_roots(n_nodes, eps=1e-5):
+def find_all_roots(n_nodes, eps=1e-8):
     h = 1 / n_nodes
 
     while (_find_roots(n_nodes, h, eps) == 'ROOTS_NOT_FOUND'):
-        h /= 2
+        h /= 2 # Decrease step
 
     roots = _find_roots(n_nodes, h, eps)
 
     return roots
 
-a = find_all_roots(15)
-#plt.grid(True)
-#plt.plot(np.linspace(-1, 1, 500), Pn(np.linspace(-1, 1, 500), 3))
-#plt.show()
+def solve_matrix(roots):
+    # Ax = b
+    roots = np.array(roots)
+    k = len(roots)
+
+    A = np.zeros((k, k))
+    b = np.zeros(k)
+
+    for i in range(k):
+        A[i] = roots ** i
+        b[i] = np.sum(roots ** i)
+
+    print(A)
+    print(b)
+
+    A_coefs = np.linalg.solve(A, b)
+
+    return A_coefs
+
+a = find_all_roots(3)
+plt.grid(True)
+plt.plot(np.linspace(-1, 1, 500), Pn(np.linspace(-1, 1, 500), 3))
+plt.show()
