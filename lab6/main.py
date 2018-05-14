@@ -57,10 +57,34 @@ def sin(x):
     return np.sin(x)
 
 def f(t):
-    return 1 / sqrt(2 * np.pi) * exp(-sqr(t) / 2)
+    return np.exp(-sqr(t) / 2)
 
 def f_test(x):
     return np.sin(x)
+
+def F(x, alpha, roots, A_ith):
+    S = 0
+    for i in range(len(roots)):
+        S += A_ith[i] * f(roots[i] * (x/2) + (x/2))
+    S *= (x/2)
+    S *= (1 / (sqrt(2 * np.pi))) 
+    
+    return S - alpha # 0.3
+    
+
+def HDM(a, b, eps, alpha, A_ith, roots):
+    c = 0
+    x = (a + b) / 2
+    while ((np.abs(b - a) / x) >= eps):
+        c += 1
+        x = (a + b) / 2
+        a, b = (a, x) if F(a, alpha, roots, A_ith) * F(x, alpha, roots, A_ith) < 0 else (x, b)
+
+        # There is no root in area
+        #if (c >= 100):
+        #    return "NO_ROOT"
+
+    return (a + b) / 2
 
 def half_divide_method(a, b, eps, Pn_degree):
     c = 0
@@ -101,7 +125,15 @@ def find_all_roots(n_nodes, eps=1e-8):
 
     roots = _find_roots(n_nodes, h, eps)
 
-    return roots
+    return np.array(roots)
+
+def k_sum(k):
+    if (k % 2 == 0):
+        return 2 / (k + 1)
+    return 0
+
+def get_x_i(a, b, roots):
+    pass
 
 def solve_matrix(roots):
     # Ax = b
@@ -113,16 +145,25 @@ def solve_matrix(roots):
 
     for i in range(k):
         A[i] = roots ** i
-        b[i] = np.sum(roots ** i)
+        b[i] = k_sum(i)
 
-    print(A)
-    print(b)
+    #print(A)
+    #print(b)
 
     A_coefs = np.linalg.solve(A, b)
 
-    return A_coefs
+    return np.array(A_coefs)
 
-a = find_all_roots(3)
-plt.grid(True)
-plt.plot(np.linspace(-1, 1, 500), Pn(np.linspace(-1, 1, 500), 3))
-plt.show()
+def find_x(roots, a):
+    pass
+
+alpha = input_alpha()
+n_nodes = input_nodes()
+roots = find_all_roots(n_nodes)
+A = solve_matrix(roots)
+print("Root: ", HDM(0, 5, 1e-5, alpha, A, roots))
+
+#plt.plot(x, [F(i, 0, roots, A) for i in x])
+#plt.show()
+
+
